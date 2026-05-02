@@ -1,4 +1,4 @@
-import { LayoutDashboard, ShoppingCart, BarChart3, Package, TrendingUp, Users, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, BarChart3, Package, TrendingUp, Users, Settings, LogOut, ChevronRight, ShieldAlert, UserCheck, Receipt } from 'lucide-react';
 import useLicense from '../store/useLicense';
 
 const NAV = [
@@ -6,9 +6,12 @@ const NAV = [
   { id: 'pos', label: 'POS Terminal', icon: ShoppingCart },
   { id: 'sales', label: 'Sales', icon: BarChart3 },
   { id: 'inventory', label: 'Inventory', icon: Package },
+  { id: 'customers', label: 'Customers', icon: UserCheck },
+  { id: 'expenses', label: 'Expenses', icon: Receipt },
   { id: 'accounting', label: 'Accounting', icon: TrendingUp },
-  { id: 'suppliers', label: 'Suppliers & Agents', icon: Users, section: 'SYSTEM' },
+  { id: 'suppliers', label: 'Suppliers & PO', icon: Users, section: 'SYSTEM' },
   { id: 'users', label: 'Users & Roles', icon: Users },
+  { id: 'audit-logs', label: 'Audit Logs', icon: ShieldAlert },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
@@ -49,23 +52,21 @@ export default function Sidebar({ view, setView, collapsed, setCollapsed, onLogo
 
       {/* Navigation */}
       <nav className="flex-1 px-[7px] py-1 flex flex-col gap-0.5 overflow-y-auto">
-        {NAV.map((item, i) => {
+        {NAV.map((item) => {
           const isActive = view === item.id;
           const Icon = item.icon;
-          const locked = isDemo && !['dashboard', 'pos', 'sales', 'inventory'].includes(item.id);
           return (
             <div key={item.id}>
               {item.section && !collapsed && <div className="px-2 pt-2 pb-1 text-[9px] font-bold text-white/[0.3] tracking-[1.5px]">{item.section}</div>}
               <button
-                onClick={() => !locked && setView(item.id)}
+                onClick={() => setView(item.id)}
                 title={collapsed ? item.label : undefined}
                 className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-[9px] border-none text-left text-xs transition-all
                   ${isActive ? 'bg-amber-500/[0.15] text-white font-bold border-l-[3px] border-l-amber-500' : 'bg-transparent text-white/50 hover:bg-white/[0.07] hover:text-white/[0.85] border-l-[3px] border-l-transparent'}
-                  ${locked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
+                  cursor-pointer`}
               >
                 <Icon size={14} className={`flex-shrink-0 ${isActive ? 'text-amber-500' : 'text-white/[0.45]'}`} />
                 {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
-                {!collapsed && locked && <span className="text-[9px] bg-white/10 px-1.5 py-0.5 rounded text-white/40">PRO</span>}
                 {!collapsed && isActive && <div className="w-[5px] h-[5px] rounded-full bg-amber-500" />}
               </button>
             </div>

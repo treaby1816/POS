@@ -74,6 +74,7 @@ export default function Users() {
                 <td className="px-4 py-3">
                   <div className="flex gap-1">
                     <button onClick={() => openEdit(u)} className="w-6 h-6 rounded-md border border-gray-100 bg-transparent text-gray-300 hover:text-amber-500 hover:border-amber-500 flex items-center justify-center transition-colors"><Edit2 size={11} /></button>
+                    <button onClick={() => window.confirm(`Delete user ${u.name}?`) && setUsers(prev => prev.filter(x => x.id !== u.id))} className="w-6 h-6 rounded-md border border-gray-100 bg-transparent text-gray-300 hover:text-red-500 hover:border-red-500 flex items-center justify-center transition-colors"><Trash2 size={11} /></button>
                   </div>
                 </td>
               </tr>

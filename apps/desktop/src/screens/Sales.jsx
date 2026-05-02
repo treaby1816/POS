@@ -38,24 +38,31 @@ export default function Sales() {
       <div className="grid grid-cols-4 gap-3">
         <KPICard icon={Download} label="Sales Records" value={String(sales.sales.length)} color="yellow" />
         <KPICard icon={Download} label="Completed" value={String(sales.getCompletedCount())} color="green" />
-        <KPICard icon={Download} label="Cancelled" value={String(sales.getCancelledCount())} color="red" />
+        <KPICard icon={Download} label="Canceled" value={String(sales.getCancelledCount())} color="red" />
         <KPICard icon={Download} label="Total Value" value={fmt(sales.getTotalValue())} color="blue" />
       </div>
 
       {/* Table */}
       <div className="white-card !p-0 overflow-hidden">
         <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-2 flex-wrap">
+          <label className="text-gray-500 text-xs font-semibold mr-1">From</label>
           <input type="date" defaultValue="2026-04-01" className="input-default !w-auto !text-xs !py-1.5" />
-          <span className="text-gray-300 text-xs">to</span>
+          <label className="text-gray-500 text-xs font-semibold ml-2 mr-1">To</label>
           <input type="date" defaultValue="2026-04-27" className="input-default !w-auto !text-xs !py-1.5" />
-          <select value={storeFilter} onChange={e => setStoreFilter(e.target.value)} className="input-default !w-auto !text-xs !py-1.5">
-            <option>All</option><option>Treabyn Abuja</option><option>Treabyn Enugu</option>
+          <select value={storeFilter} onChange={e => setStoreFilter(e.target.value)} className="input-default !w-auto !text-xs !py-1.5 ml-2">
+            <option>All Stores</option><option>Treabyn Abuja</option><option>Treabyn Enugu</option>
+          </select>
+          <select className="input-default !w-auto !text-xs !py-1.5 ml-2">
+            <option>All Cashiers</option><option>Admin</option>
+          </select>
+          <select className="input-default !w-auto !text-xs !py-1.5 ml-2">
+            <option>Completed</option><option>Canceled</option><option>Pending</option>
           </select>
           <button className="btn-primary !text-xs !px-4 !py-1.5 ml-auto">Apply Filter</button>
         </div>
         <table className="w-full text-sm">
           <thead><tr className="bg-gray-50">
-            {['Receipt No', 'Store', 'Cashier', 'Method', 'Subtotal', 'Disc', 'Total', 'Status', 'Date', ''].map(h => (
+            {['Receipt No', 'Store', 'Cashier', 'Payment Method', 'Subtotal (NGN)', 'Discount (NGN)', 'Total (NGN)', 'Status', 'Created At', ''].map(h => (
               <th key={h} className="px-3.5 py-2 text-[11px] text-gray-400 uppercase tracking-wide font-semibold text-left">{h}</th>
             ))}
           </tr></thead>

@@ -1,8 +1,10 @@
-import { BarChart3, ShoppingCart, Package, Users, TrendingUp } from 'lucide-react';
+import { BarChart3, ShoppingCart, Package, Users, TrendingUp, CreditCard, TrendingDown } from 'lucide-react';
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import KPICard from '../components/KPICard';
 import useSales from '../store/useSales';
 import useInventory from '../store/useInventory';
+import useExpenses from '../store/useExpenses';
+import useCustomers from '../store/useCustomers';
 
 const fmt = (n) => `₦${Number(n).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`;
 
@@ -27,6 +29,12 @@ const tipStyle = { contentStyle: { background: '#fff', border: '1px solid #e2e8f
 export default function Dashboard({ onNavigate }) {
   const sales = useSales();
   const inventory = useInventory();
+  const expenses = useExpenses();
+  const customers = useCustomers();
+
+  const totalRevenue = sales.sales.reduce((sum, s) => sum + (s.total || 0), 0);
+  const netProfit = totalRevenue - expenses.getTotalExpenses();
+  const totalDebt = customers.getTotalDebt();
 
   return (
     <div className="flex flex-col gap-4">
@@ -36,16 +44,20 @@ export default function Dashboard({ onNavigate }) {
         <div className="flex gap-2">
           <button onClick={() => onNavigate?.('pos')} className="btn-primary !text-xs !px-3 !py-2">+ New Sale</button>
           <button onClick={() => onNavigate?.('inventory')} className="btn-secondary !text-xs !px-3 !py-2">📦 Add Product</button>
-          <button className="btn-secondary !text-xs !px-3 !py-2">📊 Reports</button>
+          <button onClick={() => alert('Generating full performance reports... Download will begin shortly.')} className="btn-secondary !text-xs !px-3 !py-2">📊 Reports</button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-3.5">
-        <KPICard icon={BarChart3} label="Today's Revenue" value={fmt(sales.getTodayRevenue() || 31500)} sub="vs ₦28,200 yesterday" trend={11.7} color="yellow" />
-        <KPICard icon={ShoppingCart} label="Completed Sales" value={String(sales.getCompletedCount())} sub="4 pending" trend={8} color="green" />
+      <div className="grid grid-cols-3 gap-3.5">
+        <KPICard icon={BarChart3} label="Today's Revenue" value={fmt(sales.getTodayRevenue() || 0)} sub={`${sales.getCompletedCount()} sales completed`} trend={11.7} color="yellow" />
+        <KPICard icon={TrendingUp} label="Net Profit" value={fmt(netProfit)} sub={totalRevenue ? `Margin: ${((netProfit / totalRevenue) * 100).toFixed(1)}%` : 'No sales yet'} color="green" />
         <KPICard icon={Package} label="Total Products" value={String(inventory.products.filter(p => p.is_active).length)} sub={`${inventory.getLowStock().length} low stock`} color="teal" />
-        <KPICard icon={Users} label="Active Cashiers" value="5" sub="2 online now" color="red" />
+      </div>
+      <div className="grid grid-cols-3 gap-3.5">
+        <KPICard icon={CreditCard} label="Outstanding Debt" value={fmt(totalDebt)} sub={`${customers.getDebtors().length} debtors`} color="red" />
+        <KPICard icon={TrendingDown} label="Total Expenses" value={fmt(expenses.getTotalExpenses())} sub={`${expenses.expenses.length} records`} color="yellow" />
+        <KPICard icon={Users} label="Customers" value={String(customers.customers.length)} sub="Registered customers" color="blue" />
       </div>
 
       {/* Charts Row */}

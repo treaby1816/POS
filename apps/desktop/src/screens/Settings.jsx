@@ -14,10 +14,16 @@ export default function Settings() {
   const [store, setStore] = useState({ name: 'Treabyn Store 1', address: 'Wuse 2, Abuja', phone: '08012345678', email: 'hello@treabyn.com' });
   const [receipt, setReceipt] = useState({ header: 'Treabyn Store', footer: 'Thank you for shopping with us!', showLogo: true });
   const [vat, setVat] = useState({ enabled: true, percentage: 7.5 });
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [saved, setSaved] = useState(false);
 
-  const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  const handleSave = () => {
+    localStorage.setItem('theme', theme);
+    if (theme === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
 
   return (
     <div className="flex flex-col gap-4">

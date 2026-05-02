@@ -16,6 +16,10 @@ const SEED_PRODUCTS = [
 
 const useInventory = create((set, get) => ({
   products: SEED_PRODUCTS,
+  stockMovements: [
+    { id: 'm-1', productId: '1', productName: 'Mzor B2 Tablet', type: 'IN', qty: 200, balance: 200, reason: 'Initial Stock', time: '10:00 AM', date: '2026-05-01' },
+    { id: 'm-2', productId: '2', productName: 'Homebar Chocolate', type: 'IN', qty: 500, balance: 500, reason: 'Initial Stock', time: '10:05 AM', date: '2026-05-01' },
+  ],
   loading: false,
   searchQuery: '',
   categoryFilter: 'All',
@@ -26,9 +30,9 @@ const useInventory = create((set, get) => ({
   getFiltered: () => {
     const { products, searchQuery, categoryFilter } = get();
     return products.filter(p => {
-      const matchesSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase()) || (p.barcode && p.barcode.includes(searchQuery));
-      const matchesCat = categoryFilter === 'All' || p.category === categoryFilter;
-      return matchesSearch && matchesCat && p.is_active;
+      const matchSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase()) || (p.barcode && p.barcode.includes(searchQuery));
+      const matchCat = categoryFilter === 'All' || p.category === categoryFilter;
+      return matchSearch && matchCat && p.is_active;
     });
   },
 
@@ -39,9 +43,27 @@ const useInventory = create((set, get) => ({
 
   getLowStock: () => get().products.filter(p => p.stock_qty <= p.low_stock_at && p.is_active),
 
-  addProduct: (product) => set((state) => ({
-    products: [...state.products, { ...product, id: crypto.randomUUID(), is_active: true }],
-  })),
+  addMovement: (productId, productName, type, qty, balance, reason) => {
+    const now = new Date();
+    const movement = {
+      id: crypto.randomUUID(),
+      productId,
+      productName,
+      type,
+      qty,
+      balance,
+      reason,
+      time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      date: now.toISOString().split('T')[0],
+    };
+    set(state => ({ stockMovements: [movement, ...state.stockMovements].slice(0, 100) }));
+  },
+
+  addProduct: (product) => {
+    const id = crypto.randomUUID();
+    set((state) => ({ products: [...state.products, { ...product, id, is_active: true }] }));
+    get().addMovement(id, product.name, 'IN', product.stock_qty, product.stock_qty, 'New Product Added');
+  },
 
   updateProduct: (id, updates) => set((state) => ({
     products: state.products.map(p => p.id === id ? { ...p, ...updates } : p),
@@ -51,16 +73,36 @@ const useInventory = create((set, get) => ({
     products: state.products.map(p => p.id === id ? { ...p, is_active: false } : p),
   })),
 
-  adjustStock: (id, delta) => set((state) => ({
-    products: state.products.map(p => p.id === id ? { ...p, stock_qty: Math.max(0, p.stock_qty + delta) } : p),
-  })),
+  getUnits: () => ['Pcs', 'Boxes', 'Sqm', 'Kg', 'Litres', 'Yards', 'Pack', 'Roll'],
 
-  deductStock: (cartItems) => set((state) => ({
-    products: state.products.map(p => {
-      const cartItem = cartItems.find(i => i.id === p.id);
-      return cartItem ? { ...p, stock_qty: Math.max(0, p.stock_qty - cartItem.qty) } : p;
-    }),
-  })),
+  adjustStock: (id, delta) => {
+    set((state) => {
+      const products = state.products.map(p => {
+        if (p.id === id) {
+          const newQty = Math.max(0, p.stock_qty + delta);
+          get().addMovement(id, p.name, delta > 0 ? 'IN' : 'OUT', Math.abs(delta), newQty, 'Manual Adjustment');
+          return { ...p, stock_qty: newQty };
+        }
+        return p;
+      });
+      return { products };
+    });
+  },
+
+  deductStock: (cartItems) => {
+    set((state) => {
+      const products = state.products.map(p => {
+        const cartItem = cartItems.find(i => i.id === p.id);
+        if (cartItem) {
+          const newQty = Math.max(0, p.stock_qty - cartItem.qty);
+          get().addMovement(p.id, p.name, 'OUT', cartItem.qty, newQty, 'POS Sale');
+          return { ...p, stock_qty: newQty };
+        }
+        return p;
+      });
+      return { products };
+    });
+  },
 }));
 
 export default useInventory;

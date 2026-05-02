@@ -10,10 +10,13 @@ import Dashboard from './screens/Dashboard';
 import POS from './screens/POS';
 import Sales from './screens/Sales';
 import Inventory from './screens/Inventory';
+import Customers from './screens/Customers';
+import Expenses from './screens/Expenses';
 import Accounting from './screens/Accounting';
 import Suppliers from './screens/Suppliers';
 import Users from './screens/Users';
 import Settings from './screens/Settings';
+import AuditLogs from './screens/AuditLogs';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 
@@ -27,9 +30,12 @@ function MainApp({ onLogout }) {
       case 'pos': return <POS />;
       case 'sales': return <Sales />;
       case 'inventory': return <Inventory />;
+      case 'customers': return <Customers />;
+      case 'expenses': return <Expenses />;
       case 'accounting': return <Accounting />;
       case 'suppliers': return <Suppliers />;
       case 'users': return <Users />;
+      case 'audit-logs': return <AuditLogs />;
       case 'settings': return <Settings />;
       default: return <Dashboard onNavigate={setView} />;
     }
@@ -49,6 +55,13 @@ function MainApp({ onLogout }) {
 export default function App() {
   const [screen, setScreen] = useState('splash');
   const { isActivated, enterDemo, logout } = useLicense();
+
+  useEffect(() => {
+    // Initial Theme Load
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
 
   // Auto-navigate to app when activated from any screen
   useEffect(() => {

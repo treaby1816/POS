@@ -1,6 +1,18 @@
 import { useState } from 'react';
 import { User, Mail, Phone, Building2, MapPin, Lock, ChevronLeft, AlertCircle, Check, Zap, ShieldCheck, Wifi, Star } from 'lucide-react';
 
+const Field = ({ icon: Icon, label, name, type = 'text', ph = '', form, set, errors }) => (
+  <div>
+    <label className="block text-gray-500 text-[11px] font-bold tracking-wide uppercase mb-1">{label}</label>
+    <div className="relative">
+      <Icon size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${errors[name] ? 'text-red-500' : 'text-gray-400'}`} />
+      <input type={type} value={form[name]} onChange={e => set(name, e.target.value)} placeholder={ph}
+        className={`input-default !pl-9 ${errors[name] ? '!border-red-300' : ''}`} />
+    </div>
+    {errors[name] && <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1"><AlertCircle size={11} />{errors[name]}</p>}
+  </div>
+);
+
 export default function SignUp({ onSuccess, onBack }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', business: '', location: '', password: '', confirm: '' });
   const [errors, setErrors] = useState({});
@@ -22,17 +34,7 @@ export default function SignUp({ onSuccess, onBack }) {
 
   const submit = () => { if (!validate()) return; setLoading(true); setTimeout(() => { setLoading(false); setDone(true); }, 1800); setTimeout(onSuccess, 2900); };
 
-  const Field = ({ icon: Icon, label, name, type = 'text', ph = '' }) => (
-    <div>
-      <label className="block text-gray-500 text-[11px] font-bold tracking-wide uppercase mb-1">{label}</label>
-      <div className="relative">
-        <Icon size={14} className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${errors[name] ? 'text-red-500' : 'text-gray-400'}`} />
-        <input type={type} value={form[name]} onChange={e => set(name, e.target.value)} placeholder={ph}
-          className={`input-default !pl-9 ${errors[name] ? '!border-red-300' : ''}`} />
-      </div>
-      {errors[name] && <p className="text-red-500 text-[11px] mt-1 flex items-center gap-1"><AlertCircle size={11} />{errors[name]}</p>}
-    </div>
-  );
+  const common = { form, set, errors };
 
   return (
     <div className="fixed inset-0 flex animate-fade-in bg-gray-50">
@@ -77,15 +79,15 @@ export default function SignUp({ onSuccess, onBack }) {
           ) : (
             <div className="flex flex-col gap-3.5">
               <div className="grid grid-cols-2 gap-3">
-                <Field icon={User} label="Full Name" name="name" ph="e.g. Felix Ohakwe" />
-                <Field icon={Mail} label="Email" name="email" type="email" ph="you@example.com" />
-                <Field icon={Phone} label="Phone" name="phone" ph="+234 800 000 0000" />
-                <Field icon={Building2} label="Business Name" name="business" ph="e.g. FreshMart Abuja" />
+                <Field icon={User} label="Full Name" name="name" ph="e.g. Felix Ohakwe" {...common} />
+                <Field icon={Mail} label="Email" name="email" type="email" ph="you@example.com" {...common} />
+                <Field icon={Phone} label="Phone" name="phone" ph="+234 800 000 0000" {...common} />
+                <Field icon={Building2} label="Business Name" name="business" ph="e.g. FreshMart Abuja" {...common} />
               </div>
-              <Field icon={MapPin} label="Store Location" name="location" ph="e.g. Wuse 2, Abuja" />
+              <Field icon={MapPin} label="Store Location" name="location" ph="e.g. Wuse 2, Abuja" {...common} />
               <div className="grid grid-cols-2 gap-3">
-                <Field icon={Lock} label="Password" name="password" type="password" ph="Min 6 characters" />
-                <Field icon={Lock} label="Confirm Password" name="confirm" type="password" ph="Repeat password" />
+                <Field icon={Lock} label="Password" name="password" type="password" ph="Min 6 characters" {...common} />
+                <Field icon={Lock} label="Confirm Password" name="confirm" type="password" ph="Repeat password" {...common} />
               </div>
               <p className="text-gray-400 text-[11px] leading-relaxed">By creating an account you agree to Treabyn's <span className="text-amber-500 cursor-pointer">Terms</span> and <span className="text-amber-500 cursor-pointer">Privacy Policy</span>.</p>
               <button onClick={submit} disabled={loading}

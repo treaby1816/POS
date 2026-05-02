@@ -8,6 +8,7 @@ export default function ProductModal({ product, onSave, onClose }) {
     selling_price: product?.selling_price || '', cost_price: product?.cost_price || '',
     stock_qty: product?.stock_qty || 0, low_stock_at: product?.low_stock_at || 10,
     category: product?.category || 'General', supplier: product?.supplier || '',
+    unit: product?.unit || 'Pcs',
   });
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
@@ -59,6 +60,12 @@ export default function ProductModal({ product, onSave, onClose }) {
               <label className="block text-gray-500 text-[11px] font-bold tracking-wide uppercase mb-1">Category</label>
               <select value={form.category} onChange={e => set('category', e.target.value)} className="input-default">
                 {['General', 'Food', 'Beverages', 'Dairy', 'Electronics', 'FMCG', 'Confectionery', 'Other'].map(c => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-500 text-[11px] font-bold tracking-wide uppercase mb-1">Unit of Measurement</label>
+              <select value={form.unit || 'Pcs'} onChange={e => set('unit', e.target.value)} className="input-default">
+                {['Pcs', 'Boxes', 'Sqm', 'Kg', 'Litres', 'Yards', 'Pack', 'Roll'].map(u => <option key={u}>{u}</option>)}
               </select>
             </div>
             <div>

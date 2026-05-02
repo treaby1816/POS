@@ -24,13 +24,8 @@ const useLicense = create((set, get) => ({
       if (window.treabynAPI?.validateLicense) {
         result = await window.treabynAPI.validateLicense(key);
       } else {
-        // Web/dev fallback — mock validation
-        await new Promise(r => setTimeout(r, 1500));
-        if (key && key.startsWith('TRB-')) {
-          result = { valid: true, plan: 'business', tenant_name: 'Demo Business', max_stores: 5, max_devices: 10, max_cashiers: 25 };
-        } else {
-          result = { valid: false, reason: 'Invalid license key format' };
-        }
+        // Strict production mode: No mock fallback allowed
+        result = { valid: false, reason: 'License validation service is unavailable on this platform.' };
       }
       if (result.valid) {
         set({ licenseKey: key, plan: result.plan, isDemo: false, isActivated: true, tenantName: result.tenant_name, expiresAt: result.expires_at, maxStores: result.max_stores || 1, maxDevices: result.max_devices || 2, maxCashiers: result.max_cashiers || 3, loading: false });

@@ -11,7 +11,7 @@ const SHADOWS = {
 
 export default function KPICard({ icon: Icon, label, value, sub, trend, color = 'yellow' }) {
   return (
-    <div className={`${GRADIENTS[color]} rounded-card p-5 relative overflow-hidden`} style={{ boxShadow: `0 8px 28px ${SHADOWS[color]}` }}>
+    <div className={`${GRADIENTS[color]} rounded-card p-5 relative overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl cursor-pointer hover:scale-[1.02]`} style={{ boxShadow: `0 8px 28px ${SHADOWS[color]}` }}>
       <div className="absolute -right-3 -top-3 w-[75px] h-[75px] rounded-full bg-white/[0.12] pointer-events-none" />
       <div className="flex items-start justify-between mb-3 relative">
         <div className="w-[38px] h-[38px] rounded-[11px] bg-white/[0.22] flex items-center justify-center">
