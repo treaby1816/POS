@@ -1,0 +1,25 @@
+{
+  "name": "treabyn",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Treabyn Retail POS & Accounting — Monorepo",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:desktop": "npm run dev --workspace=apps/desktop",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build:desktop": "npm run build --workspace=apps/desktop",
+    "build:web": "npm run build --workspace=apps/web",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@treabyn/license-core",
+  "version": "1.0.0",
+  "description": "Treabyn license key generation and validation",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": ["license", "treabyn"],
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -1,0 +1,65 @@
+{
+  "name": "treabyn-desktop",
+  "version": "1.0.0",
+  "description": "Treabyn Retail POS & Accounting — Desktop App",
+  "author": { "name": "Treabyn", "email": "hello@treabyn.com" },
+  "homepage": "./",
+  "main": "electron/main.js",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "vite build && electron-builder build --win",
+    "electron:win": "vite build && electron-builder build --win",
+    "electron:mac": "vite build && electron-builder build --mac",
+    "electron:linux": "vite build && electron-builder build --linux"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.383.0",
+    "recharts": "^2.12.7",
+    "zustand": "^4.5.2",
+    "@supabase/supabase-js": "^2.43.0",
+    "sql.js": "^1.10.0",
+    "electron-is-dev": "^2.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.2.0",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.treabyn.pos",
+    "productName": "Treabyn POS",
+    "copyright": "© 2026 Treabyn. All rights reserved.",
+    "directories": { "output": "release", "buildResources": "assets" },
+    "files": ["dist/**/*", "electron/**/*", "assets/**/*", "node_modules/**/*"],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64", "ia32"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "assets/icon.ico",
+      "publisherName": "Treabyn",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Treabyn POS"
+    },
+    "publish": { "provider": "github", "owner": "treaby1816", "repo": "POS" }
+  }
+}
