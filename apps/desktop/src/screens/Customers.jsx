@@ -8,6 +8,7 @@ const fmt = (n) => `₦${Number(n).toLocaleString('en-NG', { minimumFractionDigi
 export default function Customers() {
   const cust = useCustomers();
   const [query, setQuery] = useState('');
+  const [limit, setLimit] = useState(20);
   const [showAdd, setShowAdd] = useState(false);
   const [showPay, setShowPay] = useState(null); // customer object
   const [payAmt, setPayAmt] = useState('');
@@ -20,6 +21,8 @@ export default function Customers() {
     const q = query.toLowerCase().trim();
     return !q || c.name.toLowerCase().includes(q) || c.phone.includes(q);
   });
+
+  const displayed = filtered.slice(0, limit);
 
   const debtors = cust.getDebtors();
   const totalDebt = cust.getTotalDebt();
@@ -82,7 +85,7 @@ export default function Customers() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((c) => (
+            {displayed.map((c) => (
               <tr key={c.id} className="border-t border-gray-100 hover:bg-gray-50/50 transition-colors">
                 <td className="px-4 py-2.5">
                   <div className="flex items-center gap-2.5">
@@ -116,6 +119,11 @@ export default function Customers() {
             )}
           </tbody>
         </table>
+        {filtered.length > limit && (
+          <div className="p-4 border-t border-gray-100 text-center">
+            <button onClick={() => setLimit(l => l + 20)} className="bg-transparent border-none text-amber-600 font-bold text-xs hover:text-amber-700">Load More Customers (+20)</button>
+          </div>
+        )}
       </div>
 
       {/* Add/Edit Modal */}

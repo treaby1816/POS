@@ -20,6 +20,7 @@ const useExpenses = create(
     (set, get) => ({
       expenses: [],
       categories: CATEGORIES,
+      totalExpenses: 0,
 
       addExpense: (data) =>
         set((s) => ({
@@ -35,16 +36,20 @@ const useExpenses = create(
               created_at: new Date().toISOString(),
             },
           ],
+          totalExpenses: s.totalExpenses + (Number(data.amount) || 0),
         })),
 
       deleteExpense: (id) =>
-        set((s) => ({
-          expenses: s.expenses.filter((e) => e.id !== id),
-        })),
+        set((s) => {
+          const item = s.expenses.find(e => e.id === id);
+          return {
+            expenses: s.expenses.filter((e) => e.id !== id),
+            totalExpenses: s.totalExpenses - (item ? item.amount : 0)
+          };
+        }),
 
       // Totals
-      getTotalExpenses: () =>
-        get().expenses.reduce((sum, e) => sum + e.amount, 0),
+      getTotalExpenses: () => get().totalExpenses,
 
       getExpensesByCategory: () => {
         const map = {};

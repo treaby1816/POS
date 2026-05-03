@@ -24,15 +24,7 @@ export default function Accounting() {
   const netProfit = grossProfit - totalExpenses;
   const totalDebt = cust.getTotalDebt();
 
-  // Weekly revenue breakdown (from sales data, grouped by day)
-  const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const weeklyRev = DAYS.map(d => ({ d, r: 0, c: 0 }));
-  sales.sales.forEach(s => {
-    try {
-      const dayIdx = new Date(s.created_at).getDay();
-      weeklyRev[dayIdx].r += s.total || 0;
-    } catch {}
-  });
+  const weeklyRev = sales.getWeeklyBreakdown();
 
   // P&L rows — now driven by real data
   const PNL = [

@@ -5,7 +5,8 @@ const useCustomers = create(
   persist(
     (set, get) => ({
       customers: [],
-      transactions: [], // debt payments / collections
+      transactions: [], 
+      totalDebt: 0,
 
       addCustomer: (data) =>
         set((s) => ({
@@ -39,6 +40,7 @@ const useCustomers = create(
           customers: s.customers.map((c) =>
             c.id === customerId ? { ...c, balance: c.balance + amount } : c
           ),
+          totalDebt: s.totalDebt + amount,
           transactions: [
             ...s.transactions,
             {
@@ -56,11 +58,14 @@ const useCustomers = create(
       // Called when customer pays off some/all of their debt
       collectPayment: (customerId, amount, note) =>
         set((s) => ({
-          customers: s.customers.map((c) =>
-            c.id === customerId
-              ? { ...c, balance: Math.max(0, c.balance - amount) }
-              : c
-          ),
+          customers: s.customers.map((c) => {
+            if (c.id === customerId) {
+              const actualReduction = Math.min(c.balance, amount);
+              return { ...c, balance: c.balance - actualReduction };
+            }
+            return c;
+          }),
+          totalDebt: Math.max(0, s.totalDebt - amount),
           transactions: [
             ...s.transactions,
             {
@@ -77,7 +82,7 @@ const useCustomers = create(
 
       getCustomer: (id) => get().customers.find((c) => c.id === id),
       getDebtors: () => get().customers.filter((c) => c.balance > 0),
-      getTotalDebt: () => get().customers.reduce((sum, c) => sum + c.balance, 0),
+      getTotalDebt: () => get().totalDebt,
       getCustomerTransactions: (id) =>
         get().transactions.filter((t) => t.customerId === id),
     }),

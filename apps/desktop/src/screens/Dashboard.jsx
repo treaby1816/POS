@@ -8,10 +8,7 @@ import useCustomers from '../store/useCustomers';
 
 const fmt = (n) => `₦${Number(n).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`;
 
-const REV_DATA = [
-  { d: 'Mon', r: 12400, c: 8200 }, { d: 'Tue', r: 18600, c: 11400 }, { d: 'Wed', r: 9800, c: 7100 },
-  { d: 'Thu', r: 22100, c: 14300 }, { d: 'Fri', r: 31500, c: 19800 }, { d: 'Sat', r: 28700, c: 17200 }, { d: 'Sun', r: 15900, c: 9600 },
-];
+// Mock data removed in favor of real store data
 const CAT_DATA = [
   { n: 'Food', v: 38, c: '#3b82f6' }, { n: 'Beverages', v: 24, c: '#06b6d4' }, { n: 'FMCG', v: 18, c: '#8b5cf6' },
   { n: 'Electronics', v: 12, c: '#f59e0b' }, { n: 'Dairy', v: 8, c: '#10b981' },
@@ -69,7 +66,7 @@ export default function Dashboard({ onNavigate }) {
             <span className="text-[11px] text-gray-500 bg-gray-100 px-3 py-0.5 rounded-full">Last 7 days</span>
           </div>
           <ResponsiveContainer width="100%" height={190}>
-            <AreaChart data={REV_DATA}>
+            <AreaChart data={sales.getWeeklyBreakdown()}>
               <defs>
                 <linearGradient id="rG" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#f59e0b" stopOpacity={0.25} /><stop offset="95%" stopColor="#f59e0b" stopOpacity={0} /></linearGradient>
                 <linearGradient id="cG" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#06b6d4" stopOpacity={0.18} /><stop offset="95%" stopColor="#06b6d4" stopOpacity={0} /></linearGradient>

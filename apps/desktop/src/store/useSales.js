@@ -41,6 +41,21 @@ const useSales = create((set, get) => ({
   getCompletedCount: () => get().sales.filter(s => s.status === 'completed').length,
   getCancelledCount: () => get().sales.filter(s => s.status === 'cancelled').length,
   getTotalValue: () => get().sales.filter(s => s.status === 'completed').reduce((sum, s) => sum + s.total, 0),
+
+  getWeeklyBreakdown: () => {
+    const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const data = DAYS.map(d => ({ d, r: 0 }));
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    get().sales.forEach(s => {
+      const d = new Date(s.created_at);
+      if (d >= weekAgo) {
+        data[d.getDay()].r += s.total || 0;
+      }
+    });
+    return data;
+  },
 }));
 
 export default useSales;

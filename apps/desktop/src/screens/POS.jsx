@@ -26,12 +26,16 @@ export default function POS() {
   const searchRef = useRef(null);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'SELECT') {
+    const handleGlobalFocus = (e) => {
+      // Auto-focus search if typing letters/numbers and not already in an input
+      if (document.activeElement?.tagName !== 'INPUT' && 
+          document.activeElement?.tagName !== 'SELECT' && 
+          e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
         searchRef.current?.focus();
       }
-    }, 1000);
-    return () => clearInterval(timer);
+    };
+    window.addEventListener('keydown', handleGlobalFocus);
+    return () => window.removeEventListener('keydown', handleGlobalFocus);
   }, []);
 
   const products = inventory.products.filter(p => {

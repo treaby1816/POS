@@ -8,6 +8,7 @@ const fmt = (n) => `₦${Number(n).toLocaleString('en-NG', { minimumFractionDigi
 export default function Expenses() {
   const exp = useExpenses();
   const [showAdd, setShowAdd] = useState(false);
+  const [limit, setLimit] = useState(30);
   const [catFilter, setCatFilter] = useState('All');
   const [form, setForm] = useState({ category: 'Fuel / Diesel', description: '', amount: '', date: new Date().toISOString().slice(0, 10) });
 
@@ -15,6 +16,7 @@ export default function Expenses() {
   const byCategory = exp.getExpensesByCategory();
   const filtered = catFilter === 'All' ? exp.expenses : exp.expenses.filter((e) => e.category === catFilter);
   const sorted = [...filtered].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const displayed = sorted.slice(0, limit);
 
   const thisMonth = new Date();
   const monthlyTotal = exp.getMonthlyTotal(thisMonth.getMonth(), thisMonth.getFullYear());
@@ -81,7 +83,7 @@ export default function Expenses() {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((e) => (
+            {displayed.map((e) => (
               <tr key={e.id} className="border-t border-gray-100 hover:bg-gray-50/50 transition-colors">
                 <td className="px-4 py-2.5 text-xs text-gray-500">{e.date}</td>
                 <td className="px-4 py-2.5">
@@ -94,11 +96,16 @@ export default function Expenses() {
                 </td>
               </tr>
             ))}
-            {sorted.length === 0 && (
+            {displayed.length === 0 && (
               <tr><td colSpan={5} className="px-4 py-10 text-center text-gray-400 text-sm">No expenses recorded yet.</td></tr>
             )}
           </tbody>
         </table>
+        {sorted.length > limit && (
+          <div className="p-4 border-t border-gray-100 text-center">
+            <button onClick={() => setLimit(l => l + 30)} className="bg-transparent border-none text-amber-600 font-bold text-xs hover:text-amber-700">Load More Records (+30)</button>
+          </div>
+        )}
       </div>
 
       {/* Add Expense Modal */}
