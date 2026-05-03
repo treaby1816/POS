@@ -174,30 +174,36 @@ export default function POS() {
         )}
       </div>
 
-      {/* Cart Panel */}
-      <div className="w-[272px] flex-shrink-0 bg-white border border-gray-100 rounded-card p-4 flex flex-col shadow-[0_4px_20px_rgba(44,62,107,0.10)]">
-        <div className="flex items-center justify-between mb-3">
+      {/* Cart Panel — elastic: grows with items, scrolls only when overflowing viewport */}
+      <div className="w-[272px] flex-shrink-0 bg-white border border-gray-100 rounded-card p-4 flex flex-col shadow-[0_4px_20px_rgba(44,62,107,0.10)] max-h-[calc(100vh-100px)]">
+        <div className="flex items-center justify-between mb-3 flex-shrink-0">
           <h3 className="font-bold text-gray-900 text-sm flex items-center gap-1.5"><ShoppingCart size={14} className="text-amber-500" />Cart <span className="text-gray-400 text-xs font-normal">({cart.items.length})</span></h3>
           {cart.items.length > 0 && <button onClick={() => cart.clearCart()} className="bg-transparent border-none text-gray-300 hover:text-red-500"><Trash2 size={12} /></button>}
         </div>
 
-        <div className="flex-1 overflow-y-auto flex flex-col gap-1.5 max-h-[200px]">
-          {cart.items.map(item => (
-            <div key={item.id} className="flex items-center gap-2 bg-gray-50 rounded-[11px] p-2 border border-gray-100">
-              <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-semibold text-gray-900 truncate">{item.name}</div>
-                <div className="text-[11px] text-amber-500">{fmt(item.selling_price)}</div>
+        {cart.items.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-gray-300 text-xs text-center">Scan or add products<br/>to start a sale</p>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto flex flex-col gap-1.5 min-h-0">
+            {cart.items.map(item => (
+              <div key={item.id} className="flex items-center gap-2 bg-gray-50 rounded-[11px] p-2 border border-gray-100 flex-shrink-0">
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11px] font-semibold text-gray-900 truncate">{item.name}</div>
+                  <div className="text-[11px] text-amber-500">{fmt(item.selling_price)}</div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => cart.updateQty(item.id, -1)} className="w-5 h-5 rounded-md bg-red-100 border-none text-red-500 flex items-center justify-center"><Minus size={9} /></button>
+                  <span className="w-4 text-center text-[11px] font-bold text-gray-900">{item.qty}</span>
+                  <button onClick={() => cart.updateQty(item.id, 1)} className="w-5 h-5 rounded-md bg-green-100 border-none text-green-600 flex items-center justify-center"><Plus size={9} /></button>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <button onClick={() => cart.updateQty(item.id, -1)} className="w-5 h-5 rounded-md bg-red-100 border-none text-red-500 flex items-center justify-center"><Minus size={9} /></button>
-                <span className="w-4 text-center text-[11px] font-bold text-gray-900">{item.qty}</span>
-                <button onClick={() => cart.updateQty(item.id, 1)} className="w-5 h-5 rounded-md bg-green-100 border-none text-green-600 flex items-center justify-center"><Plus size={9} /></button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2">
+        <div className="mt-auto pt-3 border-t border-gray-100 flex flex-col gap-2 flex-shrink-0">
           {/* Payment methods — now with Credit */}
           <div className="flex gap-1">
             {[['cash', Banknote], ['card', CreditCard], ['transfer', Smartphone], ['credit', UserCheck]].map(([method, Icon]) => (
